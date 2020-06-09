@@ -2,6 +2,12 @@ const express = require('express');
 const http = require('http');
 const morgan = require('morgan');
 const bodyParser=require('body-parser');
+
+const dishRouter = require('./routes/dishRouter');
+const promoRouter = require('./routes/promoRouter');
+const leaderRouter = require('./routes/leaderRouter');
+
+
 const hostname = 'localhost';
 const port = 3000;
 
@@ -9,47 +15,9 @@ const app = express();
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-app.all('/dishes',(req,res,next) => {            //for all requests whether it its is ger, put post or delete
-   res.statusCode=200;
-   res.setHeader('Content-Type','text/plain');
-   next();
-});
-
-app.get('/dishes', (req,res,next)=> {
-    res.end('Will send all the dishes to you! ');
-});
-
-app.post('/dishes',(req,res,next)=>{             //data is stored in body og req message, hence body-parser
-   res.end('Will add the dish: '+ req.body.name + ' with details: '+ req.body.description);
-});
-
-app.put('/dishes',(req,res,next)=>{            
-    res.statusCode=403;                    //403 means operation not supported
-    res.end('PUT operation not supprted on dishes');
- });
-
- app.delete('/dishes',(req,res,next)=>{            
-    res.end('Deleting all the dishes');
- });
-
-
- app.get('/dishes/:dishId', (req,res,next)=> {
-    res.end('Will send the detalis of the dish: '+ req.params.dishId + 'to you!');
-});
-
-app.post('/dishes/:dishId',(req,res,next)=>{             
-    res.statusCode=403;                    //403 means operation not supported
-    res.end('POST operation not supprted on /dishes/' + req.params.dishId);
-});
-
-app.put('/dishes/:dishId',(req,res,next)=>{            
-    res.write('Updating the dish: '+req.params.dishId+'\n');
-    res.end('\nWill update the dish: '+ req.body.name +'with details: '+req.body.description);
- });
-
- app.delete('/dishes/:dishId',(req,res,next)=>{            
-    res.end('Deleting dish: ' + req.params.dishId);
- });
+app.use('/dishes',dishRouter);       //use dishRouter for /dishes endpoint
+app.use('/promotions',promoRouter); 
+app.use('/leaders',leaderRouter); 
 
 app.use(express.static(__dirname + '/public'));       //including static html files index.html and aboutus.html stored in express
 
